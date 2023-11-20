@@ -1,0 +1,81 @@
+{ 
+system_ruleset.
+// basic
+//// tensor-par
+cut_elimination_tensorpar@@
+tensor(X1,Y1,XY1),par(X2,Y2,XY2),cut{cut_(XY1),cut_(XY2)} 
+  :- cut{cut_(X1),cut_(X2)},cut{cut_(Y1),cut_(Y2)}.
+
+//// ax-cut
+cut_elimination_axcut@@
+cut{cut_(X),cut_(Y)},ax{ax_(Y),ax_(Z)} 
+  :- X=Z.
+
+// box
+//// weakening
+box_cut_elimination_weakening@@
+{'!!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
+  :- kill({trash(X1),$g[X1|*X]},'?w').
+
+//// dereliction
+box_cut_elimination_dereliction@@
+{'!!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?d'(X4,X3) 
+  :- cut{cut_(X1),cut_(X4)}, $g[X1|*X].
+
+//// nested
+box_cut_elimination_nested@@
+{'!!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},{$g2[X3|*X]}
+  :- {{'!!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},$g2[X3|*X]}.
+
+nlmem_kill@@
+kill(M, T) :- unary(T) | '$callback'('nlmem_kill', M, T).
+
+}.
+
+//// contration
+{
+system_ruleset.
+//// If you want to simplify the state space, you can use zerostep.
+'$callback'(zerostep).
+
+box_cut_elimination_contraction_step1@@
+//// copy main membrane
+{'!!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
+  :- copy({'!!'(X1,X2),$g[X1|*X]},'?c_sub',trash),cut_sub(X2,C1,C2).
+
+box_cut_elimination_contraction_step2@@
+//// convert '?c' atom to c membrane
+'?c_sub'(A,B,C) 
+  :- '?c'({'?c_'(A),'?c_'(B)},C).
+
+box_cut_elimination_contraction_step34@@
+{+(X),'!!'(X1,X2),$g1[X1|*X]},{+(Y),'!!'(X3,X4),$g2[X3|*X]},'?c'({'?c_'(X2),'?c_'(X4)},X5),cut_sub(X5,C1,C2),'?c'({'?c_'(X),'?c_'(Y)},Z),trash(Z)
+  :- {'!!'(X1,X2),$g1[X1|*X]},{'!!'(X3,X4),$g2[X3|*X]},cut{cut_(X2),cut_(C1)},cut{cut_(X4),cut_(C2)}.
+
+nlmem_copy@@
+copy(M,B,C) :- unary(B) |
+    '$callback'('nlmem_copy', M, B, C).
+
+
+}.
+
+// test (lambda)
+
+/////// 1
+//ax{ax_(A1),ax_(A2)},'?d'(A1,A3),'?w'(A4).
+//{ax{ax_(B1),ax_(B2)},'?d'(B1,B3),'?w'(B4),'!!'(B2,B5)}.
+//'?c'({'?c_'(A3),'?c_'(B4)},C1).
+//'?c'({'?c_'(A4),'?c_'(B3)},C2).
+//tensor(B5,T1,D2),ax{ax_(T1),ax_(T2)}.
+//cut{cut_(A2),cut_(D2)}.
+//
+//par(C2,T2,P1).
+//par(C1,P1,F).
+//
+//{
+//ax{ax_(E1),ax_(E2)},'?d'(E1,E3),par(E3,E2,E4),'!!'(E4,E5).
+//}.
+//tensor(E5,T3,D4),ax{ax_(T3),ax_(T4)}.
+//cut{cut_(F),cut_(D4)}.
+//f(T4).
+//
