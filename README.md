@@ -6,7 +6,10 @@ This is the part of the presentation at [APLAS2023](https://conf.researchr.org/d
 
 ### demo
 
-Visualizing the cut-elimination (corresponding to $\beta$-reduction) of a net obtained from a simply-typed $\lambda$ term: $(\lambda f: n \to n . \lambda x: n . f x)(\lambda x : n . x)$ by using our LMNtal visual tool.
+Visualizing the cut-elimination (corresponding to $\beta$-reduction) of a net obtained from a simply-typed $\lambda$ term: $(\lambda f: n \to n . \lambda x: n . f x)(\lambda x : n . x)$ by using our LMNtal visual tool:
 
 ![demo](/fig/demo.gif)
 
+The state space of this reduction:
+
+![demo](/fig/state.png)
