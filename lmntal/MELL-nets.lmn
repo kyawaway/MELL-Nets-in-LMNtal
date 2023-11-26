@@ -62,20 +62,19 @@ copy(M,B,C) :- unary(B) |
 // test (lambda)
 
 /////// 1
-//ax{ax_(A1),ax_(A2)},'?d'(A1,A3),'?w'(A4).
-//{ax{ax_(B1),ax_(B2)},'?d'(B1,B3),'?w'(B4),'!!'(B2,B5)}.
-//'?c'({'?c_'(A3),'?c_'(B4)},C1).
-//'?c'({'?c_'(A4),'?c_'(B3)},C2).
-//tensor(B5,T1,D2),ax{ax_(T1),ax_(T2)}.
-//cut{cut_(A2),cut_(D2)}.
-//
-//par(C2,T2,P1).
-//par(C1,P1,F).
-//
-//{
-//ax{ax_(E1),ax_(E2)},'?d'(E1,E3),par(E3,E2,E4),'!!'(E4,E5).
-//}.
-//tensor(E5,T3,D4),ax{ax_(T3),ax_(T4)}.
-//cut{cut_(F),cut_(D4)}.
-//f(T4).
-//
+ax{ax_(A1),ax_(A2)},'?d'(A1,A3),'?w'(A4).
+{ax{ax_(B1),ax_(B2)},'?d'(B1,B3),'?w'(B4),'!!'(B2,B5)}.
+'?c'({'?c_'(A3),'?c_'(B4)},C1).
+'?c'({'?c_'(A4),'?c_'(B3)},C2).
+tensor(B5,T1,D2),ax{ax_(T1),ax_(T2)}.
+cut{cut_(A2),cut_(D2)}.
+
+par(C2,T2,P1).
+par(C1,P1,F).
+
+{
+ax{ax_(E1),ax_(E2)},'?d'(E1,E3),par(E3,E2,E4),'!!'(E4,E5).
+}.
+tensor(E5,T3,D4),ax{ax_(T3),ax_(T4)}.
+cut{cut_(F),cut_(D4)}.
+f(T4).
