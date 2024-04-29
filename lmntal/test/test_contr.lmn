@@ -1,27 +1,26 @@
-//// contration
 {
 system_ruleset.
 //// If you want to simplify the state space, you can use zerostep.
-'$callback'(zerostep).
+//'$callback'(zerostep).
 
 box_cut_elimination_contraction_step1@@
 //// copy main membrane
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
-  :- copy({'!'(X1,X2),$g[X1|*X]},'?c_sub',trash),cut_sub(X2,C1,C2).
+  :- copy(X2,'?c_sub',C),{'!'(X1,X2),$g[X1|*X]},cut_sub(C,C1,C2).
 
 box_cut_elimination_contraction_step2@@
 //// convert '?c' atom to c membrane
 '?c_sub'(A,B,C) 
   :- '?c'({'?c_'(A),'?c_'(B)},C).
 
-box_cut_elimination_contraction_step34@@
-{+(X),'!'(X1,X2),$g1[X1|*X]},{+(Y),'!'(X3,X4),$g2[X3|*X]},'?c'({'?c_'(X2),'?c_'(X4)},X5),cut_sub(X5,C1,C2),'?c'({'?c_'(X),'?c_'(Y)},Z),trash(Z)
+box_cut_elimination_contraction_step3@@
+//// convert '!' atom's connection to cut
+{'!'(X1,X2),$g1[X1|*X]},{'!'(X3,X4),$g2[X3|*X]},'?c'({'?c_'(X2),'?c_'(X4)},X5),cut_sub(X5,C1,C2)
   :- {'!'(X1,X2),$g1[X1|*X]},{'!'(X3,X4),$g2[X3|*X]},cut{cut_(X2),cut_(C1)},cut{cut_(X4),cut_(C2)}.
 
 nlmem_copy@@
 copy(M,B,C) :- unary(B) |
     '$callback'('nlmem_copy', M, B, C).
-
 
 }.
 
