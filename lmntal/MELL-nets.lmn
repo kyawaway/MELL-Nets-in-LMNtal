@@ -50,8 +50,8 @@ box_cut_elimination_contraction_step2@@
 
 box_cut_elimination_contraction_step3@@
 //// convert '!' atom's connection to cut
-{'!'(X1,X2),$g1[X1|*X]},{'!'(X3,X4),$g2[X3|*X]},'?c'({'?c_'(X2),'?c_'(X4)},X5),cut_sub(X5,C1,C2)
-  :- {'!'(X1,X2),$g1[X1|*X]},{'!'(X3,X4),$g2[X3|*X]},cut{cut_(X2),cut_(C1)},cut{cut_(X4),cut_(C2)}.
+'?c'({'?c_'(X21),'?c_'(X22)},XC),cut_sub(XC,C1,C2)
+  :- cut{cut_(X21),cut_(C1)},cut{cut_(X22),cut_(C2)}.
 
 nlmem_copy@@
 copy(M,B,C) :- unary(B) |
