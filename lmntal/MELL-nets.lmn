@@ -12,10 +12,6 @@ cut{cut_(X),cut_(Y)},ax{ax_(Y),ax_(Z)}
   :- X=Z.
 
 // box
-//// weakening
-box_cut_elimination_weakening@@
-{'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
-  :- kill({trash(X1),$g[X1|*X]},'?w').
 
 //// dereliction
 box_cut_elimination_dereliction@@
@@ -27,36 +23,35 @@ box_cut_elimination_nested@@
 {'!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},{$g2[X3|*X]}
   :- {{'!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},$g2[X3|*X]}.
 
-nlmem_kill@@
-kill(M, T) :- unary(T) | '$callback'('nlmem_kill', M, T).
+}.
 
+//// weakening
+{
+system_ruleset.
+//// If you want to simplify the state space, you can use zerostep.
+//'$callback'(zerostep).
+box_cut_elimination_weakening@@
+{'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
+  :- kill(X1,W),{$g[X1|*X]},{'?w'(W)}.
+
+mell_kill@@
+kill(M, T) :- '$callback'('mell_kill', M, T).
 }.
 
 //// contration
 {
 system_ruleset.
 //// If you want to simplify the state space, you can use zerostep.
-'$callback'(zerostep).
-
-box_cut_elimination_contraction_step1@@
+//'$callback'(zerostep).
+box_cut_elimination_contraction@@
 //// copy main membrane
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
-  :- copy(X2,'?c_sub',C),{'!'(X1,X2),$g[X1|*X]},cut_sub(C,C1,C2).
+  :- copy(X2,A1,A2,A3,B1,B2,C1,C2),{'!'(X1,X2),$g[X1|*X]},
+      {'?c'({'?c_'(A1),'?c_'(A2)},A3)},{cut{cut_(B1),cut_(B2)}}.
 
-box_cut_elimination_contraction_step2@@
-//// convert '?c' atom to c membrane
-'?c_sub'(A,B,C) 
-  :- '?c'({'?c_'(A),'?c_'(B)},C).
-
-box_cut_elimination_contraction_step3@@
-//// convert '!' atom's connection to cut
-'?c'({'?c_'(X21),'?c_'(X22)},XC),cut_sub(XC,C1,C2)
-  :- cut{cut_(X21),cut_(C1)},cut{cut_(X22),cut_(C2)}.
-
-nlmem_copy@@
-copy(M,B,C) :- unary(B) |
-    '$callback'('nlmem_copy', M, B, C).
-
+mell_copy@@
+copy(M,A1,A2,A3,B1,B2,C1,C2) :-
+    '$callback'('mell_copy', M, A1, A2, A3, B1, B2, C1, C2).
 }.
 
 // test (lambda)
@@ -78,6 +73,7 @@ ax{ax_(E1),ax_(E2)},'?d'(E1,E3),par(E3,E2,E4),'!'(E4,E5).
 tensor(E5,T3,D4),ax{ax_(T3),ax_(T4)}.
 cut{cut_(F),cut_(D4)}.
 f(T4).
+
 
 //{ax{ax_(A1),ax_(A2)},par(A1,A2,A3),'!'(A3,A4)}.
 //{ax{ax_(B1),ax_(B2)},par(B1,B2,B3),'!'(B3,B4)}.
