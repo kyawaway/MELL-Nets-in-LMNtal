@@ -3,7 +3,7 @@ system_ruleset.
 
 box_cut_elimination_weakening@@
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
-  :- mell.kill(X1,W),{$g[X1|*X]},{'?w'(W)}.
+  :- mell.delete(X1,W),{$g[X1|*X]},{'?w'(W)}.
 
 }.
 
