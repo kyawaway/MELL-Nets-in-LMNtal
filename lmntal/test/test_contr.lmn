@@ -5,12 +5,9 @@ system_ruleset.
 
 box_cut_elimination_contraction@@
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
-  :- copy(X2,A1,A2,A3,B1,B2,C1,C2),{'!'(X1,X2),$g[X1|*X]},
+  :- mell.copy(X2,A1,A2,A3,B1,B2,C1,C2),{'!'(X1,X2),$g[X1|*X]},
       {'?c'({'?c_'(A1),'?c_'(A2)},A3)},{cut{cut_(B1),cut_(B2)}}.
 
-mell_copy@@
-copy(M,A1,A2,A3,B1,B2,C1,C2) :-
-    '$callback'('mell_copy', M, A1, A2, A3, B1, B2, C1, C2).
 }.
 
 
