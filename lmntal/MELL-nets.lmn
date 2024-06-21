@@ -22,11 +22,22 @@ box_cut_elimination_nested@@
 {'!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},{$g2[X3|*X]}
   :- {{'!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},$g2[X3|*X]}.
 
+}.
+
+{
+system_ruleset.
+'$callback'(zerostep).
+
 //// weakening
 box_cut_elimination_weakening@@
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
   :- mell.delete(X1,W),{$g[X1|*X]},{'?w'(W)}.
 
+}.
+
+{
+system_ruleset.
+'$callback'(zerostep).
 //// contration
 box_cut_elimination_contraction@@
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
