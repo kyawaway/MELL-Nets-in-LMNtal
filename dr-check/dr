@@ -1,0 +1,68 @@
+#!/bin/zsh
+RESULT_DIR="./result"
+LMNTAL_BIN="/Users/kya/LaViT2_10_0/lmntal/bin/lmntal"
+SLIM_BIN="/Users/kya/uedalab/slim_dev/mell/slim/bin/slim"
+OUTPUT_SW_FILE="result_sw.txt"
+OUTPUT_DR_FILE="result_dr.txt"
+
+echo "*** DR Checker ***\n"
+
+echo "Switching : Started"
+
+filename=${1%.*}
+
+rm -r -f result 
+mkdir -p result
+
+cat ./lmn/switching.lmn >> "$filename.lmn"
+
+"$LMNTAL_BIN" -O3 --slimcode "$filename.lmn" > "$filename.il"
+"$SLIM_BIN" --show-ends --use-builtin-rule --nd "$filename.il" > "$OUTPUT_SW_FILE"
+
+line_number=1
+
+while IFS= read -r line
+do
+  if [[ ! "$line" =~ "'#" ]]; then
+  cleaned_line=$(echo "$line" | sed 's/@[^ ]*//g')
+  result_file="result/result_${line_number}.lmn"
+  echo "$cleaned_line" > "$result_file"
+
+  temp_file=$(mktemp)
+  sed 's/{/{chicket. /' "$result_file" > "$temp_file" && mv "$temp_file" "$result_file"
+
+  echo "." >> "$result_file"
+  cat ./lmn/check.lmn >> "$result_file"
+
+
+
+  line_number=$((line_number + 1))
+  fi
+
+done < "$OUTPUT_SW_FILE"
+
+rm "$OUTPUT_SW_FILE"
+
+echo "Switching : Finished"
+
+echo "==========================================================="
+echo "  End State: $((line_number-1))"
+echo "==========================================================="
+echo "DR Check: started"
+
+cd "$RESULT_DIR" || exit
+
+for filename in *; do
+  base_name="${filename%.*}"
+  "$LMNTAL_BIN" -O3 --slimcode "$base_name.lmn" > "$base_name.il"
+  "$SLIM_BIN" --show-ends --use-builtin-rule --nd "$base_name.il" >> "$OUTPUT_DR_FILE"
+done
+echo "DR Check: finished"
+echo "==========================================================="
+if grep -q "ng" "$OUTPUT_DR_FILE"; then
+  echo "  Check failed. (This Proof Structure is not Proof Net...)"
+else
+  echo "  Check passed. (This Proof Structure is Proof Net!)"
+fi
+echo "==========================================================="
+

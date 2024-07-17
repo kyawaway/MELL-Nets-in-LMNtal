@@ -1,0 +1,90 @@
+{
+system_ruleset.
+
+//// init
+init_f@@
+f(X), chicket :- token(X).
+
+init_v@@
+v(X), chicket :- token(X).
+
+init_weaken@@
+'?w'(X), chicket :- token(X).
+
+init_cut@@
+cut{cut_(X),cut_(Y)}, chicket :- token(X), token(Y).
+
+init_ax@@
+ax{ax_(X),ax_(Y)}, chicket :- token(X), token(Y).
+
+init_dele@@
+'?d'(X,Y), chicket :- token(X), token(Y).
+
+init_cont@@
+'?c'(X,Y), chicket :- token(X), token(Y).
+
+init_prom@@
+'!'(X,Y), chicket :- token(X), token(Y).
+
+init_tensor@@
+tensor(X,Y,Z), chicket :- token(X), token(Y), token(Z).
+
+//// token
+ax_token@@
+ax{ax_(X),ax_(Y)},token(X) :- token(Y).
+
+cut_token@@
+cut{cut_(X),cut_(Y)}, token(X) :- token(Y).
+
+par_u@@
+par(X,Y), token(X) :- token(Y).
+
+par_d@@
+par(X,Y), token(Y) :- token(X).
+
+weaken_token@@
+'?w'(X), token(X) :- .
+
+dele_token_u@@
+'?d'(X,Y), token(X) :- token(Y).
+
+dele_token_d@@
+'?d'(X,Y), token(Y) :- token(X).
+
+cont_token_u@@
+'?c'(X,Y), token(X) :- token(Y).
+
+cont_token_d@@
+'?c'(X,Y), token(Y) :- token(X).
+
+prom_token_u@@
+'!'(X,Y), token(X) :- token(Y).
+
+prom_token_d@@
+'!'(X,Y), token(Y) :- token(X).
+
+v_token@@
+v(X), token(X) :- .
+
+v_token_u@@
+v(X,Y), token(X) :- token(Y).
+
+v_token_d@@
+v(X,Y), token(Y) :- token(X).
+
+f_token@@
+f(X), token(X) :- .
+
+tensor_token1@@
+tensor(X,Y,Z), token(X) :- token(Y), token(Z).
+
+tensor_token2@@
+tensor(X,Y,Z), token(Y) :- token(X), token(Z).
+
+tensor_token3@@
+tensor(X,Y,Z), token(Z) :- token(X), token(Y).
+
+ng@@
+token(X), token(X) :- ng.
+}.
+

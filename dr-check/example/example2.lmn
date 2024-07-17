@@ -1,0 +1,18 @@
+cut{cut_(X),cut_(Y)}.
+ax{ax_(X),ax_(Y)}.
+{
+system_ruleset.
+ switching_par_r@@
+ par(A,B,AB) :- par(A,AB),v(B).
+ 
+ switching_par_l@@
+ par(A,B,AB) :- par(B,AB),v(A).
+ 
+ switching_contraction@@
+ '?c'({'?c_'(C1),'?c_'(C2)},X3) :- '?c'(C1,X3),v(C2).
+ 
+ switching_box@@
+ {'!'(X1,X2),$p[X1|*X]} :- $p[X2|*X]
+}.
+
+
