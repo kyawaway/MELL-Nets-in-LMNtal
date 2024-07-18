@@ -2,6 +2,7 @@
 RESULT_DIR="./result"
 LMNTAL_BIN="/Users/kya/LaViT2_10_0/lmntal/bin/lmntal"
 SLIM_BIN="/Users/kya/uedalab/slim_dev/mell/slim/bin/slim"
+EXECUTION_FILE="_execution"
 OUTPUT_SW_FILE="result_sw.txt"
 OUTPUT_DR_FILE="result_dr.txt"
 
@@ -14,11 +15,14 @@ filename=${1%.*}
 rm -r -f result 
 mkdir -p result
 
-cat ./lmn/switching.lmn >> "$filename.lmn"
+cat "$filename.lmn" > "$EXECUTION_FILE.lmn"
+cat ./lmn/switching.lmn >> "$EXECUTION_FILE.lmn"
+# cat ./lmn/switching.lmn >> "$filename.lmn"
 
-"$LMNTAL_BIN" -O3 --slimcode "$filename.lmn" > "$filename.il"
-"$SLIM_BIN" --show-ends --use-builtin-rule --nd "$filename.il" > "$OUTPUT_SW_FILE"
+"$LMNTAL_BIN" -O3 --slimcode "$EXECUTION_FILE.lmn" > "$EXECUTION_FILE.il"
+"$SLIM_BIN" --show-ends --use-builtin-rule --nd "$EXECUTION_FILE.il" > "$OUTPUT_SW_FILE"
 
+rm "$EXECUTION_FILE.lmn" "$EXECUTION_FILE.il"
 line_number=1
 
 while IFS= read -r line
