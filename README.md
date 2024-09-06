@@ -12,7 +12,7 @@ The visualization of the cut-elimination (corresponding to $\beta$-reduction) of
 
 The state space of this reduction:
 
-![demo](/fig/state.png)
+![demo](/fig/state_fixed.png)
 
 ## Quick start
 
