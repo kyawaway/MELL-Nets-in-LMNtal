@@ -12,58 +12,60 @@ cut{cut_(X),cut_(Y)},ax{ax_(Y),ax_(Z)}
   :- X=Z.
 
 // box
-//// weakening
-box_cut_elimination_weakening@@
-{'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
-  :- kill({trash(X1),$g[X1|*X]},'?w').
-
 //// dereliction
 box_cut_elimination_dereliction@@
-{'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?d'(X4,X3) 
-  :- cut{cut_(X1),cut_(X4)}, $g[X1|*X].
+{'!'(X1,X2),$g[X1|*X],@r},cut{cut_(X2),cut_(X3)},'?d'(X4,X3) 
+  :- cut{cut_(X1),cut_(X4)}, $g[X1|*X],@r.
 
 //// nested
 box_cut_elimination_nested@@
-{'!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},{$g2[X3|*X]}
-  :- {{'!'(X1,X2),$g1[X1|*X]},cut{cut_(X2),cut_(X3)},$g2[X3|*X]}.
+{'!'(X1,X2),$g1[X1|*X],@r1},cut{cut_(X2),cut_(X3)},{$g2[X3|*X],@r2}
+  :- {{'!'(X1,X2),$g1[X1|*X],@r1},cut{cut_(X2),cut_(X3)},$g2[X3|*X],@r2}.
 
-nlmem_kill@@
-kill(M, T) :- unary(T) | '$callback'('nlmem_kill', M, T).
-
-}.
+//// weakening
+box_cut_elimination_weakening@@
+{'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?w'(X3) 
+  :- mell.delete(X1,W),{$g[X1|*X]},{'?w'(W)}.
 
 //// contration
-{
-system_ruleset.
-//// If you want to simplify the state space, you can use zerostep.
-'$callback'(zerostep).
-
-box_cut_elimination_contraction_step1@@
-//// copy main membrane
+box_cut_elimination_contraction@@
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
-  :- copy(X2,'?c_sub',C),{'!'(X1,X2),$g[X1|*X]},cut_sub(C,C1,C2).
+  :- mell.copy(X2,A1,A2,A3,B1,B2,C1,C2),{'!'(X1,X2),$g[X1|*X]},
+      {'?c'({'?c_'(A1),'?c_'(A2)},A3)},{cut{cut_(B1),cut_(B2)}}.
 
-box_cut_elimination_contraction_step2@@
-//// convert '?c' atom to c membrane
-'?c_sub'(A,B,C) 
-  :- '?c'({'?c_'(A),'?c_'(B)},C).
+//box_contraction_pull@@
+//{'!'(X1,X2),'?c'({'?c_'(X3),'?c_'(X4)},X5),$p[X1,X3,X4|*X]}
+//  :- {'!'(X1,X2),$p[X1,X3,X4|*X]},'?c'({'?c_'(X3),'?c_'(X4)},X5).
+//
+//box_contraction_push@@
+///{'!'(X1,X2),$p[X1,X3,X4|*X]},'?c'({'?c_'(X3),'?c_'(X4)},X5)
+//  :- {'!'(X1,X2),'?c'({'?c_'(X3),'?c_'(X4)},X5),$p[X1,X3,X4|*X]}.
 
-box_cut_elimination_contraction_step3@@
-//// convert '!' atom's connection to cut
-'?c'({'?c_'(X21),'?c_'(X22)},XC),cut_sub(XC,C1,C2)
-  :- cut{cut_(X21),cut_(C1)},cut{cut_(X22),cut_(C2)}.
+//box_weakening_pull@@
+//{'!'(X1,X2),'?w'(X3),$p[X1|*X]}
+//  :- {'!'(X1,X2),$p[X1|*X]},'?w'(X3).
+  
+//box_weakening_push@@
+//{'!'(X1,X2),$p[X1|*X]},'?w'(X3)
+//  :- {'!'(X1,X2),'?w'(X3),$p[X1|*X]}.
 
-nlmem_copy@@
-copy(M,B,C) :- unary(B) |
-    '$callback'('nlmem_copy', M, B, C).
+//contraction_equation@@
+//'?c'({'?c_'(C1),'?c_'(C2)},CC),'?c'({'?c_'(CC),'?c_'(C3)},C4)
+//    :- '?c'({'?c_'(C2),'?c_'(C3)},CC),'?c'({'?c_'(C1),'?c_'(CC)},C4)
 
+
+//weakening_contraction_fusion@@
+//'?c'({'?c_'(C1),'?c_'(C2)},C3),'?w'(C2)
+//  :- C1=C3
 }.
 
 // test (lambda)
 
 /////// 1
 ax{ax_(A1),ax_(A2)},'?d'(A1,A3),'?w'(A4).
-{ax{ax_(B1),ax_(B2)},'?d'(B1,B3),'?w'(B4),'!'(B2,B5)}.
+{
+ax{ax_(B1),ax_(B2)},'?d'(B1,B3),'?w'(B4),'!'(B2,B5)
+}.
 '?c'({'?c_'(A3),'?c_'(B4)},C1).
 '?c'({'?c_'(A4),'?c_'(B3)},C2).
 tensor(B5,T1,D2),ax{ax_(T1),ax_(T2)}.
@@ -74,30 +76,48 @@ par(C1,P1,F).
 
 {
 ax{ax_(E1),ax_(E2)},'?d'(E1,E3),par(E3,E2,E4),'!'(E4,E5).
+
 }.
 tensor(E5,T3,D4),ax{ax_(T3),ax_(T4)}.
 cut{cut_(F),cut_(D4)}.
 f(T4).
 
-//{ax{ax_(A1),ax_(A2)},par(A1,A2,A3),'!'(A3,A4)}.
-//{ax{ax_(B1),ax_(B2)},par(B1,B2,B3),'!'(B3,B4)}.
-//{
-//  ax{ax_(C1),ax_(C2)},ax{ax_(C3),ax_(C4)},ax{ax_(C5),ax_(C6)},
-//  tensor(C4,C5,C7),
-//  '?d'(C7,C8),
-//  cut{cut_(C2),cut_(C8)},
-//  '?c'({'?c_'(C1),'?c_'(C3)},C9),
-//  par(C9,C6,C10),
-//  '!'(C10,C11)
-//}.
-//cut{cut_(C11),cut_(TTD1)}.
-//
-//tensor(A4,TA1,TA2),ax{ax_(TA1),ax_(TA3)}.
-//'?d'(TA2,TD1).
-//cut{cut_(TD1),cut_(B4)}.
-//
-//tensor(TA3,TTA1,TTA2),ax{ax_(TTA1),ax_(TTA3)}.
-//'?d'(TTA2,TTD1).
-//
-//f(TTA3).
+
+%{
+%  ax{ax_(A1),ax_(A2)},'?d'(A1,A3).
+%  par(A3,A2,A5).
+%  '!'(A5,A7).
+%}.
+%
+%tensor(A7,I1,I2).
+%ax{ax_(I1),ax_(I3)}.
+%
+%{
+%  {ax{ax_(B1),ax_(B2)},'?d'(B1,B3),'?w'(B4),'!'(B2,B5)}.
+%  tensor(B5,E1,E2).
+%  ax{ax_(E1),ax_(E3)}.
+%
+%  ax{ax_(C1),ax_(C2)},'?d'(C1,C3),'?w'(C4).
+%  '?c'({'?c_'(B4), '?c_'(C3)},D1).
+%  '?c'({'?c_'(B3),'?c_'(C4)},D2).
+%  cut{cut_(E2),cut_(C2)}.
+%  '!'(E3,E4).
+%}.
+%
+%ax{ax_(F1),ax_(F2)},'?d'(F1,F3),'?w'(F4).
+%'?c'({'?c_'(F4),'?c_'(D2)},G1).
+%'?c'({'?c_'(F3),'?c_'(D1)},G2).
+%
+%tensor(E4,H1,H2).
+%ax{ax_(H1),ax_(H3)}.
+%cut{cut_(H2),cut_(F2)}.
+%
+%par(G1,H3,P1).
+%par(G2,P1,P2).
+%
+%cut{cut_(I2),cut_(P2)}.
+%f(I3).
+
+
+
 

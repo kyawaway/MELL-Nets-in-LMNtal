@@ -3,20 +3,10 @@ system_ruleset.
 //// If you want to simplify the state space, you can use zerostep.
 //'$callback'(zerostep).
 
-box_cut_elimination_contraction_step1@@
-//// copy main membrane
+box_cut_elimination_contraction@@
 {'!'(X1,X2),$g[X1|*X]},cut{cut_(X2),cut_(X3)},'?c'({'?c_'(C1),'?c_'(C2)},X3)
-  :- nlmem.copy(X2,'?c_sub',C),{'!'(X1,X2),$g[X1|*X]},cut_sub(C,C1,C2).
-
-box_cut_elimination_contraction_step2@@
-//// convert '?c' atom to c membrane
-'?c_sub'(A,B,C) 
-  :- '?c'({'?c_'(A),'?c_'(B)},C).
-
-box_cut_elimination_contraction_step3@@
-//// convert '!' atom's connection to cut
-'?c'({'?c_'(X21),'?c_'(X22)},XC),cut_sub(XC,C1,C2)
-  :- cut{cut_(X21),cut_(C1)},cut{cut_(X22),cut_(C2)}.
+  :- mell.copy(X2,A1,A2,A3,B1,B2,C1,C2),{'!'(X1,X2),$g[X1|*X]},
+      {'?c'({'?c_'(A1),'?c_'(A2)},A3)},{cut{cut_(B1),cut_(B2)}}.
 
 }.
 
